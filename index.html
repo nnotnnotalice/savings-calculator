@@ -114,6 +114,44 @@
         box-shadow: 0 3px 8px rgba(138, 142, 233, 0.35);
       }
 
+      /* Стили для двух кнопок рядом */
+.buttons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.buttons-row .btn-primary {
+  flex: 2;
+  margin-top: 0;
+}
+
+.buttons-row .btn-secondary {
+  flex: 1;
+  margin-top: 0;
+  padding: 12px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid var(--accent);
+  background: #ffffff;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: "Nunito";
+  
+  box-shadow: 0 4px 10px rgba(138, 142, 233, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.buttons-row .btn-secondary:hover {
+  background: #F3F4FF;
+  box-shadow: 0 5px 14px rgba(138, 142, 233, 0.35);
+}
+
+.buttons-row .btn-secondary:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 8px rgba(138, 142, 233, 0.25);
+}
       .result-box {
         margin-top: 24px;
         padding: 16px 18px;
@@ -227,21 +265,25 @@
 
     <div class="layout">
 
-      <!-- Левая часть: калькулятор -->
-      <div class="calculator">
-        <label>Цель, руб.</label>
-        <input id="goal" type="number" min="0" />
+     <!-- Левая часть: калькулятор -->
+<div class="calculator">
+  <label>Цель, руб.</label>
+  <input id="goal" type="number" min="0" />
 
-        <label>Уже есть, руб.</label>
-        <input id="have" type="number" min="0" />
+  <label>Уже есть, руб.</label>
+  <input id="have" type="number" min="0" />
 
-        <label>Откладываю в день, руб.</label>
-        <input id="perDay" type="number" min="0" />
+  <label>Откладываю в день, руб.</label>
+  <input id="perDay" type="number" min="0" />
 
-        <button class="btn-primary" onclick="calculate()">Рассчитать</button>
+  <!-- 🔄 ДВЕ КНОПКИ РЯДОМ -->
+  <div class="buttons-row">
+    <button class="btn-primary" onclick="calculate()">Рассчитать</button>
+    <button class="btn-secondary" onclick="resetCalculator()">Сбросить</button>
+  </div>
 
-        <div id="result" class="result-box"></div>
-      </div>
+  <div id="result" class="result-box"></div>
+</div>
 
       <!-- Правая часть: задания -->
       <div class="tasks-panel">
@@ -365,6 +407,27 @@
             "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
         }
 
+function resetCalculator() {
+  // Очищаем поля ввода
+  document.getElementById("goal").value = "";
+  document.getElementById("have").value = "";
+  document.getElementById("perDay").value = "";
+  
+  // Очищаем результат
+  document.getElementById("result").innerHTML = "";
+  
+  // Убираем подсветку ошибок
+  document.getElementById("goal").classList.remove("input-error");
+  document.getElementById("have").classList.remove("input-error");
+  document.getElementById("perDay").classList.remove("input-error");
+  
+  // Убираем анимацию
+  document.getElementById("result").classList.remove("shake");
+  
+  // Возвращаем фокус на первое поле
+  document.getElementById("goal").focus();
+}
+        
         taskBox.innerHTML = html;
 
         const buttons = document.querySelectorAll(".task-btn");
