@@ -258,123 +258,122 @@
 
     </div>
 
-    <script>
-      // 🔧 ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ URL ИЗ CLOUD FUNCTIONS
-      const BACKEND_URL = 'https://us-central1-your-project.cloudfunctions.net/calculator-backend';
+   <script>
+  // 🔧 Vercel функция - автоматически создается при деплое
+  const BACKEND_URL = '/api/calculate';
 
-      async function calculate() {
-        const goalInput   = document.getElementById("goal");
-        const haveInput   = document.getElementById("have");
-        const perDayInput = document.getElementById("perDay");
-        const resultBox   = document.getElementById("result");
+  async function calculate() {
+    const goalInput   = document.getElementById("goal");
+    const haveInput   = document.getElementById("have");
+    const perDayInput = document.getElementById("perDay");
+    const resultBox   = document.getElementById("result");
 
-        let goal   = goalInput.value.trim();
-        let have   = haveInput.value.trim();
-        let perDay = perDayInput.value.trim();
+    let goal   = goalInput.value.trim();
+    let have   = haveInput.value.trim();
+    let perDay = perDayInput.value.trim();
 
-        // сбрасываем прошлую подсветку и шейк
-        [goalInput, haveInput, perDayInput].forEach(inp =>
-          inp.classList.remove("input-error")
-        );
-        resultBox.classList.remove("shake");
+    // сбрасываем прошлую подсветку и шейк
+    [goalInput, haveInput, perDayInput].forEach(inp =>
+      inp.classList.remove("input-error")
+    );
+    resultBox.classList.remove("shake");
 
-        // проверка на пустые поля
-        let hasEmpty = false;
-        if (goal === "") {
-          goalInput.classList.add("input-error");
-          hasEmpty = true;
-        }
-        if (have === "") {
-          haveInput.classList.add("input-error");
-          hasEmpty = true;
-        }
-        if (perDay === "") {
-          perDayInput.classList.add("input-error");
-          hasEmpty = true;
-        }
+    // проверка на пустые поля
+    let hasEmpty = false;
+    if (goal === "") {
+      goalInput.classList.add("input-error");
+      hasEmpty = true;
+    }
+    if (have === "") {
+      haveInput.classList.add("input-error");
+      hasEmpty = true;
+    }
+    if (perDay === "") {
+      perDayInput.classList.add("input-error");
+      hasEmpty = true;
+    }
 
-        if (hasEmpty) {
-          resultBox.innerHTML = "<b>Ой! Строки в калькуляторе не заполнены</b>";
-          // запускаем шейк (reset offsetWidth, чтобы анимация перезапускалась)
-          void resultBox.offsetWidth;
-          resultBox.classList.add("shake");
-          return;
-        }
+    if (hasEmpty) {
+      resultBox.innerHTML = "<b>Ой! Строки в калькуляторе не заполнены</b>";
+      void resultBox.offsetWidth;
+      resultBox.classList.add("shake");
+      return;
+    }
 
-        // защита от отрицательных значений
-        goal   = Math.max(0, Number(goal));
-        have   = Math.max(0, Number(have));
-        perDay = Math.max(0, Number(perDay));
+    // защита от отрицательных значений
+    goal   = Math.max(0, Number(goal));
+    have   = Math.max(0, Number(have));
+    perDay = Math.max(0, Number(perDay));
 
-        goalInput.value   = goal;
-        haveInput.value   = have;
-        perDayInput.value = perDay;
+    goalInput.value   = goal;
+    haveInput.value   = have;
+    perDayInput.value = perDay;
 
-        // 🔄 ВЫЗОВ НОВОГО БЭКЕНДА
-        try {
-          const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ goal, have, perDay })
-          });
+    // 🔄 ВЫЗОВ VERCEL ФУНКЦИИ
+    try {
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ goal, have, perDay })
+      });
 
-          const result = await response.json();
+      const result = await response.json();
 
-          if (result.success) {
-            showResult(result.data);
-          } else {
-            resultBox.innerHTML = `<b>Ошибка: ${result.error}</b>`;
-          }
-        } catch (error) {
-          resultBox.innerHTML = `<b>Ошибка соединения: ${error.message}</b>`;
-        }
+      if (result.success) {
+        showResult(result.data);
+      } else {
+        resultBox.innerHTML = `<b>Ошибка: ${result.error}</b>`;
       }
+    } catch (error) {
+      resultBox.innerHTML = `<b>Ошибка соединения: ${error.message}</b>`;
+    }
+  }
 
-      function showResult(result) {
-        document.getElementById("result").innerHTML =
-          `Сколько дней копить: <b>${result.days}</b><br>` +
-          `Накоплено всего: <b>${result.result} руб.</b>`;
-      }
+  function showResult(result) {
+    document.getElementById("result").innerHTML =
+      `Сколько дней копить: <b>${result.days}</b><br>` +
+      `Накоплено всего: <b>${result.result} руб.</b>`;
+  }
 
-      function setTask(task) {
-        const taskBox = document.getElementById("taskText");
-        let html = "";
+  function setTask(task) {
+    const taskBox = document.getElementById("taskText");
+    let html = "";
 
-        if (task === "task1") {
-          html =
-            "<div class='task-heading'>Сколько дней будет копить Гриша?</div>" +
-            "<div class='task-line'>Набор учёного — 3 000&nbsp;руб.</div>" +
-            "<div class='task-line'>Уже есть у Гриши — 600&nbsp;руб.</div>" +
-            "<div class='task-line'>Гриша откладывает в день — 50 или 150&nbsp;руб.</div>" +
-            "<div class='task-line'>Сколько дней копить — ?</div>";
-        } else if (task === "task2") {
-          html =
-            "<div class='task-heading'>А теперь сколько дней будет копить Гриша?</div>" +
-            "<div class='task-line'>Набор учёного — 2 500&nbsp;руб.</div>" +
-            "<div class='task-line'>Уже есть у Гриши — 450&nbsp;руб.</div>" +
-            "<div class='task-line'>Гриша откладывает в день — 40&nbsp;руб.</div>" +
-            "<div class='task-line'>Сколько дней копить — ?</div>";
-        } else if (task === "mine") {
-          html =
-            "<div class='task-heading'>Сколько дней будешь копить ты?</div>" +
-            "<div class='task-line'>1. Впиши сумму покупки, на которую ты копишь</div>" +
-            "<div class='task-line'>2. Впиши, сколько у тебя уже накоплено</div>" +
-            "<div class='task-line'>3. Впиши сумму, которое ты откладываешь в день</div>" +
-            "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
-        }
+    if (task === "task1") {
+      html =
+        "<div class='task-heading'>Сколько дней будет копить Гриша?</div>" +
+        "<div class='task-line'>Набор учёного — 3 000&nbsp;руб.</div>" +
+        "<div class='task-line'>Уже есть у Гриши — 600&nbsp;руб.</div>" +
+        "<div class='task-line'>Гриша откладывает в день — 50 или 150&nbsp;руб.</div>" +
+        "<div class='task-line'>Сколько дней копить — ?</div>";
+    } else if (task === "task2") {
+      html =
+        "<div class='task-heading'>А теперь сколько дней будет копить Гриша?</div>" +
+        "<div class='task-line'>Набор учёного — 2 500&nbsp;руб.</div>" +
+        "<div class='task-line'>Уже есть у Гриши — 450&nbsp;руб.</div>" +
+        "<div class='task-line'>Гриша откладывает в день — 40&nbsp;руб.</div>" +
+        "<div class='task-line'>Сколько дней копить — ?</div>";
+    } else if (task === "mine") {
+      html =
+        "<div class='task-heading'>Сколько дней будешь копить ты?</div>" +
+        "<div class='task-line'>1. Впиши сумму покупки, на которую ты копишь</div>" +
+        "<div class='task-line'>2. Впиши, сколько у тебя уже накоплено</div>" +
+        "<div class='task-line'>3. Впиши сумму, которое ты откладываешь в день</div>" +
+        "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
+    }
 
-        taskBox.innerHTML = html;
+    taskBox.innerHTML = html;
 
-        const buttons = document.querySelectorAll(".task-btn");
-        buttons.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.task === task);
-        });
-      }
+    const buttons = document.querySelectorAll(".task-btn");
+    buttons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.task === task);
+    });
+  }
 
-      // Автоматически показываем первое задание
-      setTask('task1');
-    </script>
+  // Автоматически показываем первое задание
+  setTask('task1');
+</script>
   </body>
 </html>
