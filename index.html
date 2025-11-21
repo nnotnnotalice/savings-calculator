@@ -407,25 +407,6 @@
             "<div class='task-line'>3. Впиши сумму, которое ты откладываешь в день</div>" +
             "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
         }
-
-function resetCalculator() {
-  // Простой и прямой сброс
-  document.getElementById("goal").value = "";
-  document.getElementById("have").value = "";
-  document.getElementById("perDay").value = "";
-  
-  document.getElementById("result").innerHTML = "";
-  
-  // Убираем красную подсветку
-  document.getElementById("goal").classList.remove("input-error");
-  document.getElementById("have").classList.remove("input-error");
-  document.getElementById("perDay").classList.remove("input-error");
-  
-  // Фокус на первое поле
-  document.getElementById("goal").focus();
-  
-  console.log("Поля очищены!");
-}
         
         taskBox.innerHTML = html;
 
@@ -434,9 +415,24 @@ function resetCalculator() {
           btn.classList.toggle("active", btn.dataset.task === task);
         });
       }
+}
+function resetCalculator() {
+  document.getElementById("goal").value = "";
+  document.getElementById("have").value = "";
+  document.getElementById("perDay").value = "";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("goal").classList.remove("input-error");
+  document.getElementById("have").classList.remove("input-error");
+  document.getElementById("perDay").classList.remove("input-error");
+  document.getElementById("result").classList.remove("shake");
+  document.getElementById("goal").focus();
+  console.log("Поля очищены!");
+}
 
+// Автоматически показываем первое задание
       // Автоматически показываем первое задание
       setTask('task1');
+      
     </script>
   </body>
 </html>
