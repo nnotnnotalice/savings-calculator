@@ -409,30 +409,22 @@
         }
 
 function resetCalculator() {
-  // Получаем все поля ввода
-  const goalInput = document.getElementById("goal");
-  const haveInput = document.getElementById("have"); 
-  const perDayInput = document.getElementById("perDay");
-  const resultBox = document.getElementById("result");
+  // Простой и прямой сброс
+  document.getElementById("goal").value = "";
+  document.getElementById("have").value = "";
+  document.getElementById("perDay").value = "";
   
-  // Полностью очищаем значения
-  goalInput.value = "";
-  haveInput.value = "";
-  perDayInput.value = "";
+  document.getElementById("result").innerHTML = "";
   
-  // Очищаем результат
-  resultBox.innerHTML = "";
+  // Убираем красную подсветку
+  document.getElementById("goal").classList.remove("input-error");
+  document.getElementById("have").classList.remove("input-error");
+  document.getElementById("perDay").classList.remove("input-error");
   
-  // Убираем подсветку ошибок
-  goalInput.classList.remove("input-error");
-  haveInput.classList.remove("input-error"); 
-  perDayInput.classList.remove("input-error");
+  // Фокус на первое поле
+  document.getElementById("goal").focus();
   
-  // Убираем анимацию
-  resultBox.classList.remove("shake");
-  
-  // Возвращаем фокус на первое поле
-  goalInput.focus();
+  console.log("Поля очищены!");
 }
         
         taskBox.innerHTML = html;
