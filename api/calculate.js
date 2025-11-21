@@ -1,30 +1,33 @@
-export default async function handler(req, res) {
+export default async function handler(request, response) {
   // Разрешаем CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  if (request.method === 'OPTIONS') {
+    return response.status(200).end();
   }
 
-  if (req.method === 'POST') {
+  if (request.method === 'POST') {
     try {
-      const { goal, have, perDay } = req.body;
+      const body = await request.json();
+      const { goal, have, perDay } = body;
       
-      // ВСЮ ЛОГИКУ ПЕРЕНЕСЁМ СЮДА БЕЗ ОТДЕЛЬНОЙ ФУНКЦИИ
+      // Преобразуем в числа
       const goalNum = Number(goal);
       const haveNum = Number(have) || 0;
       const perDayNum = Number(perDay);
 
-      if (!goalNum || !perDayNum) {
-        return res.status(200).json({
+      // Проверяем валидность
+      if (!goalNum || goalNum <= 0 || !perDayNum || perDayNum <= 0) {
+        return response.status(200).json({
           success: true,
-          data: {days: "❓", result: "Впиши числа в строки калькулятора"}
+          data: { days: "❓", result: "Впиши числа в строки калькулятора" }
         });
       }
 
-      let remaining = goalNum - haveNum;
+      // Вычисляем
+      const remaining = goalNum - haveNum;
       let days, finalAmount;
 
       if (remaining <= 0) {
@@ -35,7 +38,8 @@ export default async function handler(req, res) {
         finalAmount = haveNum + perDayNum * days;
       }
 
-      return res.status(200).json({
+      // Возвращаем результат
+      return response.status(200).json({
         success: true,
         data: {
           days: days,
@@ -44,14 +48,15 @@ export default async function handler(req, res) {
       });
       
     } catch (error) {
-      return res.status(500).json({
+      return response.status(500).json({
         success: false,
-        error: error.message
+        error: 'Ошибка сервера: ' + error.message
       });
     }
   }
 
-  return res.status(405).json({
+  // Если метод не POST
+  return response.status(405).json({
     success: false,
     error: 'Only POST method allowed'
   });
