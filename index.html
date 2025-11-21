@@ -303,7 +303,7 @@
 
     <script>
       // 🔧 ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ URL ИЗ CLOUD FUNCTIONS
-     const BACKEND_URL = '/.netlify/functions/calculate';
+      const BACKEND_URL = '/.netlify/functions/calculate';
 
       async function calculate() {
         const goalInput   = document.getElementById("goal");
@@ -407,7 +407,7 @@
             "<div class='task-line'>3. Впиши сумму, которое ты откладываешь в день</div>" +
             "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
         }
-        
+
         taskBox.innerHTML = html;
 
         const buttons = document.querySelectorAll(".task-btn");
@@ -415,24 +415,22 @@
           btn.classList.toggle("active", btn.dataset.task === task);
         });
       }
-}
-function resetCalculator() {
-  document.getElementById("goal").value = "";
-  document.getElementById("have").value = "";
-  document.getElementById("perDay").value = "";
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("goal").classList.remove("input-error");
-  document.getElementById("have").classList.remove("input-error");
-  document.getElementById("perDay").classList.remove("input-error");
-  document.getElementById("result").classList.remove("shake");
-  document.getElementById("goal").focus();
-  console.log("Поля очищены!");
-}
 
-// Автоматически показываем первое задание
+      function resetCalculator() {
+        document.getElementById("goal").value = "";
+        document.getElementById("have").value = "";
+        document.getElementById("perDay").value = "";
+        document.getElementById("result").innerHTML = "";
+        document.getElementById("goal").classList.remove("input-error");
+        document.getElementById("have").classList.remove("input-error");
+        document.getElementById("perDay").classList.remove("input-error");
+        document.getElementById("result").classList.remove("shake");
+        document.getElementById("goal").focus();
+        console.log("Поля очищены!");
+      }
+
       // Автоматически показываем первое задание
       setTask('task1');
-      
-    </script>
+</script>
   </body>
 </html>
