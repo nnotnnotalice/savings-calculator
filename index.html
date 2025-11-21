@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Шрифт Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --accent: #8A8EE9;
+        --accent-hover: #7075e2;
+        --result-bg: #F0F1FD;
+        --text-color: #111827;
+        --muted: #6B7280;
+        --error: #f97373;
+        --error-bg: #FEF2F2;
+      }
+
+      body {
+        font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 24px;
+        margin: 0;
+        background: #ffffff;
+        color: var(--text-color);
+      }
+
+      .layout {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+      }
+
+      .calculator {
+        flex: 1;
+      }
+
+      .tasks-panel {
+        width: 260px;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        line-height: 1.25;
+      }
+
+      .title span {
+        display: block;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      label {
+        display: block;
+        margin-top: 16px;
+        margin-bottom: 4px;
+        font-weight: 600;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-family: "Nunito";
+      }
+
+      input[type="number"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(138, 142, 233, 0.25);
+      }
+
+      /* красная подсветка пустых полей */
+      .input-error {
+        border-color: var(--error);
+        background: var(--error-bg);
+      }
+
+      .btn-primary {
+        width: 100%;
+        margin-top: 24px;
+        padding: 12px 16px;
+        font-size: 20px;
+        font-weight: 700;
+        border-radius: 10px;
+        border: none;
+        background: var(--accent);
+        color: #ffffff;
+        cursor: pointer;
+        font-family: "Nunito";
+
+        box-shadow: 0 4px 10px rgba(138, 142, 233, 0.4);
+        transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 5px 14px rgba(138, 142, 233, 0.55);
+      }
+
+      .btn-primary:active {
+        transform: scale(0.97);
+        box-shadow: 0 3px 8px rgba(138, 142, 233, 0.35);
+      }
+
+      .result-box {
+        margin-top: 24px;
+        padding: 16px 18px;
+        border-radius: 10px;
+        background: var(--result-bg);
+        line-height: 1.3;
+        text-align: center;
+        font-size: 18px;
+      }
+
+      /* shake-анимация для блока результата */
+      .shake {
+        animation: shake 0.35s ease;
+      }
+
+      @keyframes shake {
+        0%   { transform: translateX(0); }
+        20%  { transform: translateX(-4px); }
+        40%  { transform: translateX(4px); }
+        60%  { transform: translateX(-4px); }
+        80%  { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+      }
+
+      /* Панель заданий справа */
+
+      .tasks-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .task-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .task-btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: 10px;
+        border: none;
+        background: #ffffff;
+        color: var(--text-color);
+        cursor: pointer;
+        text-align: center;
+        font-family: "Nunito";
+
+        box-shadow: 0 4px 10px rgba(138, 142, 233, 0.25);
+        transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+      }
+
+      .task-btn:hover {
+        background: #F3F4FF;
+        box-shadow: 0 5px 14px rgba(138, 142, 233, 0.35);
+      }
+
+      .task-btn.active {
+        background: var(--accent);
+        color: #ffffff;
+        box-shadow: 0 5px 14px rgba(138, 142, 233, 0.55);
+      }
+
+      .task-btn:active {
+        transform: scale(0.97);
+      }
+
+      .task-box {
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #F9FAFB;
+        font-size: 14px;
+        line-height: 1.4;
+        font-family: "Nunito";
+        min-height: 140px;
+      }
+
+      .task-line {
+        margin-bottom: 6px;
+      }
+
+      .task-heading {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 15px;
+      }
+
+      @media (max-width: 700px) {
+        .layout {
+          flex-direction: column;
+        }
+
+        .tasks-panel {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1 class="title">
+      Калькулятор накоплений
+      <span>Выбери задание и впиши числа в строки калькулятора</span>
+    </h1>
+
+    <div class="layout">
+
+      <!-- Левая часть: калькулятор -->
+      <div class="calculator">
+        <label>Цель, руб.</label>
+        <input id="goal" type="number" min="0" />
+
+        <label>Уже есть, руб.</label>
+        <input id="have" type="number" min="0" />
+
+        <label>Откладываю в день, руб.</label>
+        <input id="perDay" type="number" min="0" />
+
+        <button class="btn-primary" onclick="calculate()">Рассчитать</button>
+
+        <div id="result" class="result-box"></div>
+      </div>
+
+      <!-- Правая часть: задания -->
+      <div class="tasks-panel">
+        <div class="tasks-title">Задания</div>
+
+        <div class="task-buttons">
+          <button class="task-btn" data-task="task1" onclick="setTask('task1')">1 задание</button>
+          <button class="task-btn" data-task="task2" onclick="setTask('task2')">2 задание</button>
+          <button class="task-btn" data-task="mine" onclick="setTask('mine')">Мои накопления</button>
+        </div>
+
+        <div id="taskText" class="task-box"></div>
+      </div>
+
+    </div>
+
+    <script>
+      // 🔧 ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ URL ИЗ CLOUD FUNCTIONS
+      const BACKEND_URL = 'https://us-central1-your-project.cloudfunctions.net/calculator-backend';
+
+      async function calculate() {
+        const goalInput   = document.getElementById("goal");
+        const haveInput   = document.getElementById("have");
+        const perDayInput = document.getElementById("perDay");
+        const resultBox   = document.getElementById("result");
+
+        let goal   = goalInput.value.trim();
+        let have   = haveInput.value.trim();
+        let perDay = perDayInput.value.trim();
+
+        // сбрасываем прошлую подсветку и шейк
+        [goalInput, haveInput, perDayInput].forEach(inp =>
+          inp.classList.remove("input-error")
+        );
+        resultBox.classList.remove("shake");
+
+        // проверка на пустые поля
+        let hasEmpty = false;
+        if (goal === "") {
+          goalInput.classList.add("input-error");
+          hasEmpty = true;
+        }
+        if (have === "") {
+          haveInput.classList.add("input-error");
+          hasEmpty = true;
+        }
+        if (perDay === "") {
+          perDayInput.classList.add("input-error");
+          hasEmpty = true;
+        }
+
+        if (hasEmpty) {
+          resultBox.innerHTML = "<b>Ой! Строки в калькуляторе не заполнены</b>";
+          // запускаем шейк (reset offsetWidth, чтобы анимация перезапускалась)
+          void resultBox.offsetWidth;
+          resultBox.classList.add("shake");
+          return;
+        }
+
+        // защита от отрицательных значений
+        goal   = Math.max(0, Number(goal));
+        have   = Math.max(0, Number(have));
+        perDay = Math.max(0, Number(perDay));
+
+        goalInput.value   = goal;
+        haveInput.value   = have;
+        perDayInput.value = perDay;
+
+        // 🔄 ВЫЗОВ НОВОГО БЭКЕНДА
+        try {
+          const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ goal, have, perDay })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showResult(result.data);
+          } else {
+            resultBox.innerHTML = `<b>Ошибка: ${result.error}</b>`;
+          }
+        } catch (error) {
+          resultBox.innerHTML = `<b>Ошибка соединения: ${error.message}</b>`;
+        }
+      }
+
+      function showResult(result) {
+        document.getElementById("result").innerHTML =
+          `Сколько дней копить: <b>${result.days}</b><br>` +
+          `Накоплено всего: <b>${result.result} руб.</b>`;
+      }
+
+      function setTask(task) {
+        const taskBox = document.getElementById("taskText");
+        let html = "";
+
+        if (task === "task1") {
+          html =
+            "<div class='task-heading'>Сколько дней будет копить Гриша?</div>" +
+            "<div class='task-line'>Набор учёного — 3 000&nbsp;руб.</div>" +
+            "<div class='task-line'>Уже есть у Гриши — 600&nbsp;руб.</div>" +
+            "<div class='task-line'>Гриша откладывает в день — 50 или 150&nbsp;руб.</div>" +
+            "<div class='task-line'>Сколько дней копить — ?</div>";
+        } else if (task === "task2") {
+          html =
+            "<div class='task-heading'>А теперь сколько дней будет копить Гриша?</div>" +
+            "<div class='task-line'>Набор учёного — 2 500&nbsp;руб.</div>" +
+            "<div class='task-line'>Уже есть у Гриши — 450&nbsp;руб.</div>" +
+            "<div class='task-line'>Гриша откладывает в день — 40&nbsp;руб.</div>" +
+            "<div class='task-line'>Сколько дней копить — ?</div>";
+        } else if (task === "mine") {
+          html =
+            "<div class='task-heading'>Сколько дней будешь копить ты?</div>" +
+            "<div class='task-line'>1. Впиши сумму покупки, на которую ты копишь</div>" +
+            "<div class='task-line'>2. Впиши, сколько у тебя уже накоплено</div>" +
+            "<div class='task-line'>3. Впиши сумму, которое ты откладываешь в день</div>" +
+            "<div class='task-line'>4. Нажми на кнопку «Рассчитать» и узнай, сколько дней ты будешь копить</div>";
+        }
+
+        taskBox.innerHTML = html;
+
+        const buttons = document.querySelectorAll(".task-btn");
+        buttons.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.task === task);
+        });
+      }
+
+      // Автоматически показываем первое задание
+      setTask('task1');
+    </script>
+  </body>
+</html>
