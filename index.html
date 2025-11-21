@@ -114,7 +114,7 @@
         box-shadow: 0 3px 8px rgba(138, 142, 233, 0.35);
       }
 
-      /* Стили для двух кнопок рядом */
+/* Стили для двух кнопок рядом */
 .buttons-row {
   display: flex;
   gap: 12px;
@@ -152,6 +152,7 @@
   transform: scale(0.97);
   box-shadow: 0 3px 8px rgba(138, 142, 233, 0.25);
 }
+      
       .result-box {
         margin-top: 24px;
         padding: 16px 18px;
@@ -265,25 +266,25 @@
 
     <div class="layout">
 
-     <!-- Левая часть: калькулятор -->
-<div class="calculator">
-  <label>Цель, руб.</label>
-  <input id="goal" type="number" min="0" />
+          <!-- Левая часть: калькулятор -->
+      <div class="calculator">
+        <label>Цель, руб.</label>
+        <input id="goal" type="number" min="0" />
 
-  <label>Уже есть, руб.</label>
-  <input id="have" type="number" min="0" />
+        <label>Уже есть, руб.</label>
+        <input id="have" type="number" min="0" />
 
-  <label>Откладываю в день, руб.</label>
-  <input id="perDay" type="number" min="0" />
+        <label>Откладываю в день, руб.</label>
+        <input id="perDay" type="number" min="0" />
 
-  <!-- 🔄 ДВЕ КНОПКИ РЯДОМ -->
-  <div class="buttons-row">
-    <button class="btn-primary" onclick="calculate()">Рассчитать</button>
-    <button class="btn-secondary" onclick="resetCalculator()">Сбросить</button>
-  </div>
+        <!-- 🔄 ДВЕ КНОПКИ РЯДОМ -->
+        <div class="buttons-row">
+          <button class="btn-primary" onclick="calculate()">Рассчитать</button>
+          <button class="btn-secondary" onclick="resetCalculator()">Сбросить</button>
+        </div>
 
-  <div id="result" class="result-box"></div>
-</div>
+        <div id="result" class="result-box"></div>
+      </div>
 
       <!-- Правая часть: задания -->
       <div class="tasks-panel">
@@ -408,24 +409,30 @@
         }
 
 function resetCalculator() {
-  // Очищаем поля ввода
-  document.getElementById("goal").value = "";
-  document.getElementById("have").value = "";
-  document.getElementById("perDay").value = "";
+  // Получаем все поля ввода
+  const goalInput = document.getElementById("goal");
+  const haveInput = document.getElementById("have"); 
+  const perDayInput = document.getElementById("perDay");
+  const resultBox = document.getElementById("result");
+  
+  // Полностью очищаем значения
+  goalInput.value = "";
+  haveInput.value = "";
+  perDayInput.value = "";
   
   // Очищаем результат
-  document.getElementById("result").innerHTML = "";
+  resultBox.innerHTML = "";
   
   // Убираем подсветку ошибок
-  document.getElementById("goal").classList.remove("input-error");
-  document.getElementById("have").classList.remove("input-error");
-  document.getElementById("perDay").classList.remove("input-error");
+  goalInput.classList.remove("input-error");
+  haveInput.classList.remove("input-error"); 
+  perDayInput.classList.remove("input-error");
   
   // Убираем анимацию
-  document.getElementById("result").classList.remove("shake");
+  resultBox.classList.remove("shake");
   
   // Возвращаем фокус на первое поле
-  document.getElementById("goal").focus();
+  goalInput.focus();
 }
         
         taskBox.innerHTML = html;
