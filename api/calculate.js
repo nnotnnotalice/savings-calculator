@@ -1,17 +1,24 @@
-export default async function handler(request, response) {
+// Явно указываем CommonJS синтаксис
+module.exports = async (req, res) => {
   // Разрешаем CORS
-  response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (request.method === 'OPTIONS') {
-    return response.status(200).end();
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  if (request.method === 'POST') {
+  if (req.method === 'POST') {
     try {
-      const body = await request.json();
-      const { goal, have, perDay } = body;
+      let body = '';
+      
+      // Читаем тело запроса
+      for await (const chunk of req) {
+        body += chunk;
+      }
+      
+      const { goal, have, perDay } = JSON.parse(body);
       
       // Преобразуем в числа
       const goalNum = Number(goal);
@@ -19,14 +26,14 @@ export default async function handler(request, response) {
       const perDayNum = Number(perDay);
 
       // Проверяем валидность
-      if (!goalNum || goalNum <= 0 || !perDayNum || perDayNum <= 0) {
-        return response.status(200).json({
+      if (!goalNum || !perDayNum) {
+        return res.json({
           success: true,
           data: { days: "❓", result: "Впиши числа в строки калькулятора" }
         });
       }
 
-      // Вычисляем
+      // Вычисления
       const remaining = goalNum - haveNum;
       let days, finalAmount;
 
@@ -39,25 +46,22 @@ export default async function handler(request, response) {
       }
 
       // Возвращаем результат
-      return response.status(200).json({
+      return res.json({
         success: true,
-        data: {
-          days: days,
-          result: finalAmount
-        }
+        data: { days, result: finalAmount }
       });
       
     } catch (error) {
-      return response.status(500).json({
+      return res.status(500).json({
         success: false,
-        error: 'Ошибка сервера: ' + error.message
+        error: 'Ошибка: ' + error.message
       });
     }
   }
 
   // Если метод не POST
-  return response.status(405).json({
+  return res.status(405).json({
     success: false,
     error: 'Only POST method allowed'
   });
-}
+};
