@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+      /* Ваши стили остаются без изменений */
       :root {
         --accent: #8A8EE9;
         --accent-hover: #7075e2;
@@ -81,7 +82,6 @@
         box-shadow: 0 0 0 2px rgba(138, 142, 233, 0.25);
       }
 
-      /* красная подсветка пустых полей */
       .input-error {
         border-color: var(--error);
         background: var(--error-bg);
@@ -99,7 +99,6 @@
         color: #ffffff;
         cursor: pointer;
         font-family: "Nunito";
-
         box-shadow: 0 4px 10px rgba(138, 142, 233, 0.4);
         transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
       }
@@ -114,44 +113,42 @@
         box-shadow: 0 3px 8px rgba(138, 142, 233, 0.35);
       }
 
-/* Стили для двух кнопок рядом */
-.buttons-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-}
+      .buttons-row {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
 
-.buttons-row .btn-primary {
-  flex: 2;
-  margin-top: 0;
-}
+      .buttons-row .btn-primary {
+        flex: 2;
+        margin-top: 0;
+      }
 
-.buttons-row .btn-secondary {
-  flex: 1;
-  margin-top: 0;
-  padding: 12px 16px;
-  font-size: 18px;
-  font-weight: 700;
-  border-radius: 10px;
-  border: 2px solid var(--accent);
-  background: #ffffff;
-  color: var(--accent);
-  cursor: pointer;
-  font-family: "Nunito";
-  
-  box-shadow: 0 4px 10px rgba(138, 142, 233, 0.25);
-  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
+      .buttons-row .btn-secondary {
+        flex: 1;
+        margin-top: 0;
+        padding: 12px 16px;
+        font-size: 18px;
+        font-weight: 700;
+        border-radius: 10px;
+        border: 2px solid var(--accent);
+        background: #ffffff;
+        color: var(--accent);
+        cursor: pointer;
+        font-family: "Nunito";
+        box-shadow: 0 4px 10px rgba(138, 142, 233, 0.25);
+        transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+      }
 
-.buttons-row .btn-secondary:hover {
-  background: #F3F4FF;
-  box-shadow: 0 5px 14px rgba(138, 142, 233, 0.35);
-}
+      .buttons-row .btn-secondary:hover {
+        background: #F3F4FF;
+        box-shadow: 0 5px 14px rgba(138, 142, 233, 0.35);
+      }
 
-.buttons-row .btn-secondary:active {
-  transform: scale(0.97);
-  box-shadow: 0 3px 8px rgba(138, 142, 233, 0.25);
-}
+      .buttons-row .btn-secondary:active {
+        transform: scale(0.97);
+        box-shadow: 0 3px 8px rgba(138, 142, 233, 0.25);
+      }
       
       .result-box {
         margin-top: 24px;
@@ -163,7 +160,6 @@
         font-size: 18px;
       }
 
-      /* shake-анимация для блока результата */
       .shake {
         animation: shake 0.35s ease;
       }
@@ -176,8 +172,6 @@
         80%  { transform: translateX(4px); }
         100% { transform: translateX(0); }
       }
-
-      /* Панель заданий справа */
 
       .tasks-title {
         font-size: 18px;
@@ -205,7 +199,6 @@
         cursor: pointer;
         text-align: center;
         font-family: "Nunito";
-
         box-shadow: 0 4px 10px rgba(138, 142, 233, 0.25);
         transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
       }
@@ -265,8 +258,7 @@
     </h1>
 
     <div class="layout">
-
-          <!-- Левая часть: калькулятор -->
+      <!-- Левая часть: калькулятор -->
       <div class="calculator">
         <label>Цель, руб.</label>
         <input id="goal" type="number" min="0" />
@@ -298,14 +290,11 @@
 
         <div id="taskText" class="task-box"></div>
       </div>
-
     </div>
 
     <script>
-      // 🔧 ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ URL ИЗ CLOUD FUNCTIONS
-      const BACKEND_URL = '/.netlify/functions/calculate';
-
-      async function calculate() {
+      // Убираем Netlify функции и делаем расчет на клиенте
+      function calculate() {
         const goalInput   = document.getElementById("goal");
         const haveInput   = document.getElementById("have");
         const perDayInput = document.getElementById("perDay");
@@ -338,7 +327,6 @@
 
         if (hasEmpty) {
           resultBox.innerHTML = "<b>Ой! Строки в калькуляторе не заполнены</b>";
-          // запускаем шейк (reset offsetWidth, чтобы анимация перезапускалась)
           void resultBox.offsetWidth;
           resultBox.classList.add("shake");
           return;
@@ -353,32 +341,26 @@
         haveInput.value   = have;
         perDayInput.value = perDay;
 
-        // 🔄 ВЫЗОВ НОВОГО БЭКЕНДА
+        // 🔄 РАСЧЕТ НА КЛИЕНТЕ (вместо Netlify функций)
         try {
-          const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ goal, have, perDay })
-          });
+          if (perDay === 0) {
+            resultBox.innerHTML = "<b>Ошибка: сумма в день не может быть нулевой</b>";
+            return;
+          }
 
-          const result = await response.json();
-
-          if (result.success) {
-            showResult(result.data);
+          const days = Math.ceil((goal - have) / perDay);
+          
+          if (days < 0) {
+            resultBox.innerHTML = "<b>Ура! Цель уже достигнута 🎉</b>";
           } else {
-            resultBox.innerHTML = `<b>Ошибка: ${result.error}</b>`;
+            const totalSaved = have + (days * perDay);
+            resultBox.innerHTML = 
+              `Сколько дней копить: <b>${days}</b><br>` +
+              `Накоплено всего: <b>${totalSaved} руб.</b>`;
           }
         } catch (error) {
-          resultBox.innerHTML = `<b>Ошибка соединения: ${error.message}</b>`;
+          resultBox.innerHTML = `<b>Ошибка расчета: ${error.message}</b>`;
         }
-      }
-
-      function showResult(result) {
-        document.getElementById("result").innerHTML =
-          `Сколько дней копить: <b>${result.days}</b><br>` +
-          `Накоплено всего: <b>${result.result} руб.</b>`;
       }
 
       function setTask(task) {
@@ -431,6 +413,6 @@
 
       // Автоматически показываем первое задание
       setTask('task1');
-</script>
+    </script>
   </body>
 </html>
